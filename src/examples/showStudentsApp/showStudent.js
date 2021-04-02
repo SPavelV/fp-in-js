@@ -1,14 +1,17 @@
-export const showStudent = (ssn) => {
-  const student = db.find(ssn);
-  if (student !== null) {
-    document.querySelector(`${elementId}`).innerHTML = `
-      ${student.ssn},
-      ${student.firstname},
-      ${student.lastname}
-    `;
-  } else {
-    throw new Error("Student not found!");
+const find = curry((db, id) => {
+  let obj = db.find(id);
+  if (obj === null) {
+    throw new Error("Object not found!");
   }
-};
+  return obj;
+});
 
+const csv = (student) =>
+  `${student.ssn}, ${student.firstname}, ${student.lastname}`;
+
+const append = curry((selector, info) => {
+  document.querySelector(selector).innerHTML = info;
+});
+
+const showStudent = run(append("#app"), csv, find(db));
 showStudent("777-77-7777");
